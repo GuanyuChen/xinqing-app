@@ -1,9 +1,32 @@
+-- 自定义心情表
+CREATE TABLE custom_moods (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+  name TEXT NOT NULL CHECK (LENGTH(name) > 0 AND LENGTH(name) <= 20),
+  icon TEXT NOT NULL CHECK (LENGTH(icon) > 0 AND LENGTH(icon) <= 10),
+  color TEXT NOT NULL CHECK (LENGTH(color) > 0 AND LENGTH(color) <= 20),
+  description TEXT NOT NULL CHECK (LENGTH(description) > 0 AND LENGTH(description) <= 100),
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
+  
+  -- 确保每个用户的自定义心情名称唯一
+  UNIQUE(user_id, name)
+);
+
+-- 为匿名用户（无 user_id）确保心情名称唯一
+CREATE UNIQUE INDEX custom_moods_anonymous_name_unique 
+ON custom_moods (name) 
+WHERE user_id IS NULL;
+
+-- 创建索引
+CREATE INDEX idx_custom_moods_user_id ON custom_moods(user_id);
+CREATE INDEX idx_custom_moods_name ON custom_moods(name);
+
 -- 心情记录表
 CREATE TABLE mood_records (
   id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
   date DATE NOT NULL,
-  mood TEXT NOT NULL CHECK (mood IN ('happy', 'sad', 'anxious', 'calm', 'angry', 'excited', 'tired', 'peaceful')),
+  mood TEXT NOT NULL, -- 移除 CHECK 约束以支持自定义心情
   intensity INTEGER NOT NULL CHECK (intensity >= 1 AND intensity <= 5),
   diary TEXT NOT NULL DEFAULT '',
   photo_url TEXT,
@@ -56,6 +79,22 @@ CREATE POLICY "Users can update own mood records" ON mood_records
     WITH CHECK (auth.uid() = user_id OR user_id IS NULL);
 
 CREATE POLICY "Users can delete own mood records" ON mood_records
+    FOR DELETE USING (auth.uid() = user_id OR user_id IS NULL);
+
+-- 自定义心情表的 RLS 策略
+ALTER TABLE custom_moods ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Users can view own custom moods" ON custom_moods
+    FOR SELECT USING (auth.uid() = user_id OR user_id IS NULL);
+
+CREATE POLICY "Users can insert own custom moods" ON custom_moods
+    FOR INSERT WITH CHECK (auth.uid() = user_id OR user_id IS NULL);
+
+CREATE POLICY "Users can update own custom moods" ON custom_moods
+    FOR UPDATE USING (auth.uid() = user_id OR user_id IS NULL)
+    WITH CHECK (auth.uid() = user_id OR user_id IS NULL);
+
+CREATE POLICY "Users can delete own custom moods" ON custom_moods
     FOR DELETE USING (auth.uid() = user_id OR user_id IS NULL);
 
 -- 创建存储桶用于媒体文件

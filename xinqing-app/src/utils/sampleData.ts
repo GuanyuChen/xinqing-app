@@ -5,7 +5,7 @@ export const generateSampleData = (): MoodRecord[] => {
   const sampleRecords: MoodRecord[] = [];
   const today = new Date();
   
-  const diaryTemplates = {
+  const diaryTemplates: Record<string, string[]> = {
     happy: [
       '今天收到了好消息，心情特别好！和朋友一起吃饭聊天，感觉生活充满希望。',
       '阳光明媚的一天，做了很多喜欢的事情。看书、听音乐、散步，每一刻都很珍贵。',
@@ -64,7 +64,7 @@ export const generateSampleData = (): MoodRecord[] => {
     ]
   };
 
-  const intensityPatterns = {
+  const intensityPatterns: Record<string, number[]> = {
     happy: [3, 4, 5, 4, 5],
     sad: [2, 3, 2, 3, 1],
     anxious: [3, 4, 3, 2, 4],
@@ -142,11 +142,15 @@ export const generateSampleData = (): MoodRecord[] => {
       }
 
       // 选择强度
-      const intensityOptions = intensityPatterns[selectedMood];
+      const intensityOptions = intensityPatterns[selectedMood] || [3, 3, 4, 4, 3]; // 默认强度模式
       const intensity = intensityOptions[Math.floor(Math.random() * intensityOptions.length)];
 
       // 选择日记内容
-      const diaryOptions = diaryTemplates[selectedMood];
+      const diaryOptions = diaryTemplates[selectedMood] || [
+        '今天有特殊的感受，记录下这一刻。',
+        '每一天都有不同的体验和感悟。',
+        '心情如天气，时晴时雨，都是生活的一部分。'
+      ]; // 默认日记模板
       const diary = diaryOptions[Math.floor(Math.random() * diaryOptions.length)];
 
       // 添加一些变化，让内容更丰富
@@ -191,7 +195,7 @@ export const shouldGenerateSampleData = (existingRecords: MoodRecord[]): boolean
 export const generateMoodSample = (mood: MoodType): Omit<MoodRecord, 'id' | 'createdAt' | 'updatedAt'> => {
   const today = new Date().toISOString().split('T')[0];
   
-  const diaryTemplates = {
+  const diaryTemplates: Record<string, string> = {
     happy: '今天心情特别好！阳光明媚，做了很多喜欢的事情。',
     sad: '今天有些失落，但我知道这只是暂时的，明天会更好。',
     anxious: '有些担心明天的事情，需要深呼吸，告诉自己一切都会好的。',
@@ -202,7 +206,7 @@ export const generateMoodSample = (mood: MoodType): Omit<MoodRecord, 'id' | 'cre
     peaceful: '内心很宁静，享受这难得的平和时光。',
   };
 
-  const intensityRange = {
+  const intensityRange: Record<string, number[]> = {
     happy: [4, 5],
     sad: [2, 3],
     anxious: [3, 4],
@@ -213,14 +217,14 @@ export const generateMoodSample = (mood: MoodType): Omit<MoodRecord, 'id' | 'cre
     peaceful: [4, 5],
   };
 
-  const range = intensityRange[mood];
+  const range = intensityRange[mood] || [3, 4]; // 默认强度范围
   const intensity = range[Math.floor(Math.random() * range.length)];
 
   return {
     date: today,
     mood,
     intensity,
-    diary: diaryTemplates[mood],
+    diary: diaryTemplates[mood] || '今天有特殊的感受，记录下这一刻。', // 默认日记内容
     photo: undefined,
     audio: undefined,
     tags: [],
