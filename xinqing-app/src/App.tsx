@@ -7,6 +7,7 @@ import { GlobalStyle } from './styles/GlobalStyle';
 import TodayMoodRecord from './pages/TodayMoodRecord';
 import HistoryPage from './pages/HistoryPage';
 import AnalyticsPage from './pages/AnalyticsPage';
+import CenterIcon from './components/CenterIcon';
 
 const AppContainer = styled.div`
   min-height: 100vh;
@@ -37,6 +38,7 @@ const Navigation = styled(motion.nav)`
 
 const NavContainer = styled.div`
   display: flex;
+  align-items: center;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   border-radius: ${theme.borderRadius.large};
@@ -44,6 +46,7 @@ const NavContainer = styled.div`
   box-shadow: ${theme.shadows.hover};
   border: 1px solid rgba(255, 255, 255, 0.3);
   gap: ${theme.spacing.xs};
+  position: relative;
   
   @media (max-width: 768px) {
     justify-content: space-around;
@@ -52,9 +55,9 @@ const NavContainer = styled.div`
   }
 `;
 
-const NavItem = styled(motion.div)<{ $active: boolean }>`
+const NavItem = styled(motion.div)<{ $active: boolean; $isCenter?: boolean }>`
   position: relative;
-  flex: 1;
+  flex: ${props => props.$isCenter ? '0 0 auto' : '1'};
   
   @media (max-width: 768px) {
     display: flex;
@@ -163,6 +166,18 @@ const LoadingSubtext = styled(motion.div)`
   text-align: center;
 `;
 
+const CenterIconContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 ${theme.spacing.md};
+  pointer-events: none;
+  
+  @media (max-width: 768px) {
+    margin: 0 ${theme.spacing.sm};
+  }
+`;
+
 // 导航配置
 const navItems = [
   {
@@ -193,7 +208,29 @@ const BottomNavigation: React.FC = () => {
       transition={{ duration: 0.5, delay: 1 }}
     >
       <NavContainer>
-        {navItems.map((item, index) => {
+        {navItems.slice(0, Math.ceil(navItems.length / 2)).map((item, index) => {
+          const isActive = location.pathname === item.path;
+          return (
+            <NavItem key={item.path} $active={isActive}>
+              <NavLink to={item.path} $active={isActive}>
+                {isActive && (
+                  <NavBackground
+                    layoutId="nav-background"
+                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                  />
+                )}
+                <NavIcon>{item.icon}</NavIcon>
+                <NavLabel>{item.label}</NavLabel>
+              </NavLink>
+            </NavItem>
+          );
+        })}
+        
+        <CenterIconContainer>
+          <CenterIcon />
+        </CenterIconContainer>
+        
+        {navItems.slice(Math.ceil(navItems.length / 2)).map((item, index) => {
           const isActive = location.pathname === item.path;
           return (
             <NavItem key={item.path} $active={isActive}>
