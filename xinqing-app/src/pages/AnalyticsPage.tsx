@@ -7,6 +7,7 @@ import MoodTrendChart from '../components/MoodTrendChart';
 import MoodDistributionChart from '../components/MoodDistributionChart';
 import WordCloud from '../components/WordCloud';
 import HybridMoodStorage from '../utils/hybridStorage';
+import SimpleLoading from '../components/SimpleLoading';
 
 const Container = styled.div`
   padding: ${theme.spacing.lg};
@@ -160,15 +161,6 @@ const ChartGrid = styled.div`
   }
 `;
 
-const LoadingContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400px;
-  font-size: ${theme.typography.fontSize.lg};
-  color: ${theme.colors.text.secondary};
-`;
-
 const ErrorContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -299,15 +291,11 @@ const AnalyticsPage: React.FC = () => {
   if (isLoading) {
     return (
       <Container>
-        <LoadingContainer>
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          >
-            📊
-          </motion.div>
-          <span style={{ marginLeft: theme.spacing.md }}>正在分析数据...</span>
-        </LoadingContainer>
+        <SimpleLoading
+          type="content"
+          size="medium"
+          message="正在分析数据..."
+        />
       </Container>
     );
   }

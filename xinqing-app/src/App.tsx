@@ -9,6 +9,7 @@ import HistoryPage from './pages/HistoryPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import PeriodPage from './pages/PeriodPage';
 import CenterIcon from './components/CenterIcon';
+import SimpleLoading from './components/SimpleLoading';
 
 const AppContainer = styled.div`
   background: ${theme.colors.gradient.primary};
@@ -198,35 +199,6 @@ const MainContent = styled(motion.main)`
   @media (max-width: 768px) {
     padding-bottom: 100px; /* 为底部导航预留空间 */
   }
-`;
-
-const InitialLoading = styled.div`
-  position: fixed;
-  inset: 0;
-  background: ${theme.colors.gradient.primary};
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-`;
-
-const LoadingIcon = styled(motion.div)`
-  font-size: 4rem;
-  margin-bottom: ${theme.spacing.lg};
-`;
-
-const LoadingText = styled(motion.div)`
-  font-size: ${theme.typography.fontSize.lg};
-  color: ${theme.colors.text.primary};
-  text-align: center;
-  margin-bottom: ${theme.spacing.md};
-`;
-
-const LoadingSubtext = styled(motion.div)`
-  font-size: ${theme.typography.fontSize.sm};
-  color: ${theme.colors.text.secondary};
-  text-align: center;
 `;
 
 const CenterIconContainer = styled.div`
@@ -425,34 +397,13 @@ const AppRoutes: React.FC = () => {
 
 const App: React.FC = () => {
   const [isInitialLoading, setIsInitialLoading] = useState(true);
-  const [loadingStep, setLoadingStep] = useState(0);
-
-  const loadingSteps = [
-    { icon: '🎨', text: '初始化界面', subtext: '准备柔和的视觉体验' },
-    { icon: '💾', text: '准备数据存储', subtext: '连接到云端数据库' },
-    { icon: '🔗', text: '初始化 Supabase 连接', subtext: '确保数据安全同步' },
-    { icon: '✨', text: '完成准备', subtext: '一切就绪，开始记录心情吧！' },
-  ];
 
   useEffect(() => {
     const initializeApp = async () => {
       try {
-        // 步骤 1: 初始化界面
-        await new Promise(resolve => setTimeout(resolve, 800));
-        setLoadingStep(1);
-
-        // 步骤 2: 准备数据存储
-        await new Promise(resolve => setTimeout(resolve, 600));
-        setLoadingStep(2);
-
-        // 步骤 3: 初始化 Supabase 连接
-        await new Promise(resolve => setTimeout(resolve, 800));
-        setLoadingStep(3);
-
-        // 步骤 4: 完成初始化
-        await new Promise(resolve => setTimeout(resolve, 600));
+        // 简化初始化过程，只需要短暂加载
+        await new Promise(resolve => setTimeout(resolve, 1500));
         setIsInitialLoading(false);
-
       } catch (error) {
         console.error('应用初始化失败:', error);
         // 即使失败也要继续，确保应用可用
@@ -465,39 +416,14 @@ const App: React.FC = () => {
   }, []);
 
   if (isInitialLoading) {
-    const currentStep = loadingSteps[loadingStep];
-    
     return (
       <>
         <GlobalStyle />
-        <InitialLoading>
-          <LoadingIcon
-            key={`icon-${loadingStep}`}
-            initial={{ scale: 0, rotate: -180 }}
-            animate={{ scale: 1, rotate: 0 }}
-            transition={{ type: "spring", stiffness: 200, damping: 10 }}
-          >
-            {currentStep.icon}
-          </LoadingIcon>
-          
-          <LoadingText
-            key={`text-${loadingStep}`}
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            {currentStep.text}
-          </LoadingText>
-          
-          <LoadingSubtext
-            key={`subtext-${loadingStep}`}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-          >
-            {currentStep.subtext}
-          </LoadingSubtext>
-        </InitialLoading>
+        <SimpleLoading
+          type="app"
+          size="large"
+          message="心情小助手"
+        />
       </>
     );
   }
