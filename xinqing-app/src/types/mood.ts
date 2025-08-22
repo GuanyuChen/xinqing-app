@@ -6,7 +6,18 @@ export type MoodType =
   | 'angry'     // 愤怒
   | 'excited'   // 兴奋
   | 'tired'     // 疲惫
-  | 'peaceful'; // 宁静
+  | 'peaceful'  // 宁静
+  | string;     // 支持自定义心情
+
+export interface CustomMood {
+  id: string;
+  name: string;
+  icon: string;
+  color: string;
+  description: string;
+  createdAt: Date;
+  userId?: string;
+}
 
 export interface MoodRecord {
   id: string;
