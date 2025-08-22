@@ -10,13 +10,17 @@ import MediaUpload from '../components/MediaUpload';
 import HybridMoodStorage from '../utils/hybridStorage';
 
 const Container = styled.div`
-  min-height: 100vh;
   padding: ${theme.spacing.lg};
-  background: ${theme.colors.gradient.primary};
+  background: transparent;
+  
+  @media (min-width: 769px) {
+    padding: ${theme.spacing.lg};
+    max-width: 100%;
+    margin: 0 auto;
+  }
   
   @media (max-width: 768px) {
     padding: ${theme.spacing.md};
-    min-height: calc(100vh - 80px); /* 为底部导航留空间 */
   }
 `;
 
@@ -78,6 +82,11 @@ const FormContainer = styled(motion.div)`
   box-shadow: ${theme.shadows.soft};
   overflow: hidden;
   
+  @media (min-width: 769px) {
+    max-width: 900px;
+    box-shadow: ${theme.shadows.hover};
+  }
+  
   @media (max-width: 768px) {
     max-width: 100%;
     border-radius: ${theme.borderRadius.medium};
@@ -108,6 +117,11 @@ const Step = styled(motion.div)<{ $active: boolean; $completed: boolean }>`
 
 const StepContent = styled(motion.div)`
   min-height: 400px;
+  
+  @media (min-width: 769px) {
+    min-height: 500px;
+    padding: ${theme.spacing.lg};
+  }
 `;
 
 const Navigation = styled.div`

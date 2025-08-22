@@ -9,9 +9,14 @@ import WordCloud from '../components/WordCloud';
 import HybridMoodStorage from '../utils/hybridStorage';
 
 const Container = styled.div`
-  min-height: 100vh;
   padding: ${theme.spacing.lg};
-  background: ${theme.colors.gradient.primary};
+  background: transparent;
+  
+  @media (min-width: 769px) {
+    padding: ${theme.spacing.lg};
+    max-width: 100%;
+    margin: 0 auto;
+  }
 `;
 
 const Header = styled(motion.div)`
@@ -82,6 +87,10 @@ const TimeButton = styled(motion.button)<{ $active: boolean }>`
 const ContentContainer = styled(motion.div)`
   max-width: 1200px;
   margin: 0 auto;
+  
+  @media (min-width: 769px) {
+    max-width: 100%;
+  }
 `;
 
 const SummaryCards = styled(motion.div)`
@@ -89,6 +98,15 @@ const SummaryCards = styled(motion.div)`
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: ${theme.spacing.lg};
   margin-bottom: ${theme.spacing.xl};
+  
+  @media (min-width: 769px) {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: ${theme.spacing.xl};
+  }
+  
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(4, 1fr);
+  }
 `;
 
 const SummaryCard = styled.div`

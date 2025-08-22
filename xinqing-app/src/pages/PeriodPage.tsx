@@ -4,9 +4,14 @@ import { motion } from 'framer-motion';
 import { theme } from '../styles/theme';
 
 const Container = styled.div`
-  min-height: 100vh;
   padding: ${theme.spacing.lg};
-  background: ${theme.colors.gradient.primary};
+  background: transparent;
+  
+  @media (min-width: 769px) {
+    padding: ${theme.spacing.lg};
+    max-width: 100%;
+    margin: 0 auto;
+  }
 `;
 
 const Header = styled(motion.div)`
@@ -34,6 +39,10 @@ const Subtitle = styled.p`
 const ContentContainer = styled(motion.div)`
   max-width: 800px;
   margin: 0 auto;
+  
+  @media (min-width: 769px) {
+    max-width: 900px;
+  }
 `;
 
 const CycleCard = styled.div`

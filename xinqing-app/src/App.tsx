@@ -11,25 +11,38 @@ import PeriodPage from './pages/PeriodPage';
 import CenterIcon from './components/CenterIcon';
 
 const AppContainer = styled.div`
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
   background: ${theme.colors.gradient.primary};
+  
+  @media (min-width: 769px) {
+    max-width: 1200px;
+    margin: 0 auto;
+    box-shadow: 0 0 40px rgba(186, 186, 222, 0.1);
+    position: relative;
+    width: 100%;
+  }
 `;
 
 const Navigation = styled(motion.nav)`
   position: fixed;
-  bottom: ${theme.spacing.lg};
-  left: 50%;
-  transform: translateX(-50%);
   z-index: 100;
   
+  /* PC端吸顶居中导航 */
+  @media (min-width: 769px) {
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    padding: ${theme.spacing.md} 0;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+  }
+  
+  /* 移动端底部固定导航 */
   @media (max-width: 768px) {
     bottom: ${theme.spacing.md};
     left: ${theme.spacing.md};
     right: ${theme.spacing.md};
-    transform: none;
-    width: auto;
     
     /* iOS 安全区域适配 */
     padding-bottom: env(safe-area-inset-bottom);
@@ -49,6 +62,16 @@ const NavContainer = styled.div`
   gap: ${theme.spacing.xs};
   position: relative;
   
+  /* PC端水平导航样式 */
+  @media (min-width: 769px) {
+    justify-content: center;
+    padding: ${theme.spacing.md} ${theme.spacing.xl};
+    border-radius: ${theme.borderRadius.large};
+    gap: ${theme.spacing.sm};
+    margin: 0 auto;
+  }
+  
+  /* 移动端圆形导航样式 */
   @media (max-width: 768px) {
     justify-content: space-around;
     padding: ${theme.spacing.xs} ${theme.spacing.sm};
@@ -60,6 +83,14 @@ const NavItem = styled(motion.div)<{ $active: boolean; $isCenter?: boolean }>`
   position: relative;
   flex: ${props => props.$isCenter ? '0 0 auto' : '1'};
   
+  /* PC端布局 */
+  @media (min-width: 769px) {
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: center;
+  }
+  
+  /* 移动端布局 */
   @media (max-width: 768px) {
     display: flex;
     justify-content: center;
@@ -89,7 +120,17 @@ const NavLink = styled(Link)<{ $active: boolean }>`
     }
   `}
   
+  /* PC端水平布局 */
+  @media (min-width: 769px) {
+    flex-direction: row;
+    min-width: 120px;
+    padding: ${theme.spacing.md} ${theme.spacing.lg};
+    gap: ${theme.spacing.sm};
+  }
+  
+  /* 移动端垂直布局 */
   @media (max-width: 768px) {
+    flex-direction: column;
     padding: ${theme.spacing.md} ${theme.spacing.sm};
     min-width: 50px;
     min-height: 44px; /* iOS 推荐的最小触摸区域 */
@@ -113,6 +154,14 @@ const NavIcon = styled.div`
   font-size: 1.5rem;
   margin-bottom: ${theme.spacing.xs};
   
+  /* PC端图标样式 */
+  @media (min-width: 769px) {
+    font-size: 1.3rem;
+    margin-bottom: 0;
+    margin-right: ${theme.spacing.xs};
+  }
+  
+  /* 移动端图标样式 */
   @media (max-width: 768px) {
     font-size: 1.3rem;
     margin-bottom: 2px;
@@ -124,6 +173,12 @@ const NavLabel = styled.div`
   font-weight: ${theme.typography.fontWeight.medium};
   text-align: center;
   
+  /* PC端标签样式 */
+  @media (min-width: 769px) {
+    font-size: ${theme.typography.fontSize.sm};
+  }
+  
+  /* 移动端标签样式 */
   @media (max-width: 768px) {
     font-size: 10px;
   }
@@ -131,10 +186,17 @@ const NavLabel = styled.div`
 
 const MainContent = styled(motion.main)`
   flex: 1;
-  padding-bottom: 120px; // 为底部导航留出空间
   
+  /* PC端为吸顶导航预留空间，避免遮挡 */
+  @media (min-width: 769px) {
+    padding-top: 120px; /* 为吸顶导航预留足够空间，避免遮挡 */
+    padding-left: ${theme.spacing.xl};
+    padding-right: ${theme.spacing.xl};
+  }
+  
+  /* 移动端为底部固定导航预留空间 */
   @media (max-width: 768px) {
-    padding-bottom: 100px; // 移动端增加更多空间适配安全区域
+    padding-bottom: 100px; /* 为底部导航预留空间 */
   }
 `;
 
@@ -174,6 +236,12 @@ const CenterIconContainer = styled.div`
   margin: 0 ${theme.spacing.md};
   pointer-events: none;
   
+  /* PC端隐藏中央图标 */
+  @media (min-width: 769px) {
+    display: none;
+  }
+  
+  /* 移动端显示中央图标 */
   @media (max-width: 768px) {
     margin: 0 ${theme.spacing.sm};
   }
@@ -203,56 +271,85 @@ const navItems = [
   },
 ];
 
-// 底部导航组件
-const BottomNavigation: React.FC = () => {
+// 响应式导航组件
+const ResponsiveNavigation: React.FC = () => {
   const location = useLocation();
+  const isMobile = window.innerWidth <= 768;
 
   return (
     <Navigation
-      initial={{ opacity: 0, y: 100 }}
+      initial={{ opacity: 0, y: isMobile ? 50 : -50 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 1 }}
+      transition={{ duration: 0.5, delay: 0.3 }}
     >
       <NavContainer>
-        {navItems.slice(0, Math.ceil(navItems.length / 2)).map((item, index) => {
-          const isActive = location.pathname === item.path;
-          return (
-            <NavItem key={item.path} $active={isActive}>
-              <NavLink to={item.path} $active={isActive}>
-                {isActive && (
-                  <NavBackground
-                    layoutId="nav-background"
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                  />
-                )}
-                <NavIcon>{item.icon}</NavIcon>
-                <NavLabel>{item.label}</NavLabel>
-              </NavLink>
-            </NavItem>
-          );
-        })}
-        
-        <CenterIconContainer>
-          <CenterIcon />
-        </CenterIconContainer>
-        
-        {navItems.slice(Math.ceil(navItems.length / 2)).map((item, index) => {
-          const isActive = location.pathname === item.path;
-          return (
-            <NavItem key={item.path} $active={isActive}>
-              <NavLink to={item.path} $active={isActive}>
-                {isActive && (
-                  <NavBackground
-                    layoutId="nav-background"
-                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                  />
-                )}
-                <NavIcon>{item.icon}</NavIcon>
-                <NavLabel>{item.label}</NavLabel>
-              </NavLink>
-            </NavItem>
-          );
-        })}
+        {isMobile ? (
+          <>
+            {/* 移动端布局：前半部分 */}
+            {navItems.slice(0, Math.ceil(navItems.length / 2)).map((item, index) => {
+              const isActive = location.pathname === item.path;
+              return (
+                <NavItem key={item.path} $active={isActive}>
+                  <NavLink to={item.path} $active={isActive}>
+                    {isActive && (
+                      <NavBackground
+                        layoutId="nav-background"
+                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                      />
+                    )}
+                    <NavIcon>{item.icon}</NavIcon>
+                    <NavLabel>{item.label}</NavLabel>
+                  </NavLink>
+                </NavItem>
+              );
+            })}
+            
+            {/* 中央图标 */}
+            <CenterIconContainer>
+              <CenterIcon />
+            </CenterIconContainer>
+            
+            {/* 移动端布局：后半部分 */}
+            {navItems.slice(Math.ceil(navItems.length / 2)).map((item, index) => {
+              const isActive = location.pathname === item.path;
+              return (
+                <NavItem key={item.path} $active={isActive}>
+                  <NavLink to={item.path} $active={isActive}>
+                    {isActive && (
+                      <NavBackground
+                        layoutId="nav-background"
+                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                      />
+                    )}
+                    <NavIcon>{item.icon}</NavIcon>
+                    <NavLabel>{item.label}</NavLabel>
+                  </NavLink>
+                </NavItem>
+              );
+            })}
+          </>
+        ) : (
+          <>
+            {/* PC端布局：全部导航项 */}
+            {navItems.map((item) => {
+              const isActive = location.pathname === item.path;
+              return (
+                <NavItem key={item.path} $active={isActive}>
+                  <NavLink to={item.path} $active={isActive}>
+                    {isActive && (
+                      <NavBackground
+                        layoutId="nav-background"
+                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                      />
+                    )}
+                    <NavIcon>{item.icon}</NavIcon>
+                    <NavLabel>{item.label}</NavLabel>
+                  </NavLink>
+                </NavItem>
+              );
+            })}
+          </>
+        )}
       </NavContainer>
     </Navigation>
   );
@@ -410,7 +507,7 @@ const App: React.FC = () => {
       <AppContainer>
         <GlobalStyle />
         <AppRoutes />
-        <BottomNavigation />
+        <ResponsiveNavigation />
       </AppContainer>
     </Router>
   );

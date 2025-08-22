@@ -12,6 +12,10 @@ interface DiaryInputProps {
 
 const Container = styled.div`
   padding: ${theme.spacing.lg};
+  
+  @media (min-width: 769px) {
+    padding: ${theme.spacing.xl};
+  }
 `;
 
 const Title = styled.h3`
@@ -48,6 +52,11 @@ const StyledTextarea = styled.textarea<{ $hasContent: boolean }>`
   resize: vertical;
   transition: all ${theme.animation.transition.normal};
   box-shadow: ${theme.shadows.gentle};
+  
+  @media (min-width: 769px) {
+    min-height: 160px;
+    font-size: ${theme.typography.fontSize.base};
+  }
   
   &:focus {
     outline: none;

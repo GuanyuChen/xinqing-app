@@ -13,6 +13,10 @@ interface MoodSelectorProps {
 const Container = styled.div`
   padding: ${theme.spacing.lg};
   
+  @media (min-width: 769px) {
+    padding: ${theme.spacing.xl};
+  }
+  
   @media (max-width: 768px) {
     padding: ${theme.spacing.md};
   }
@@ -50,6 +54,12 @@ const MoodGrid = styled.div`
   gap: ${theme.spacing.md};
   max-width: 600px;
   margin: 0 auto;
+  
+  @media (min-width: 769px) {
+    grid-template-columns: repeat(4, 1fr);
+    gap: ${theme.spacing.lg};
+    max-width: 700px;
+  }
   
   @media (max-width: 768px) {
     grid-template-columns: repeat(2, 1fr);
