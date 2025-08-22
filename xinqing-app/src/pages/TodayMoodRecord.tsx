@@ -8,6 +8,7 @@ import IntensitySelector from '../components/IntensitySelector';
 import DiaryInput from '../components/DiaryInput';
 import MediaUpload from '../components/MediaUpload';
 import HybridMoodStorage from '../utils/hybridStorage';
+import SimpleLoading from '../components/SimpleLoading';
 
 const Container = styled.div`
   padding: ${theme.spacing.lg};
@@ -328,16 +329,11 @@ const TodayMoodRecord: React.FC = () => {
   if (isLoading) {
     return (
       <Container>
-        <div style={{ 
-          display: 'flex', 
-          justifyContent: 'center', 
-          alignItems: 'center', 
-          height: '100vh',
-          fontSize: theme.typography.fontSize.lg,
-          color: theme.colors.text.secondary
-        }}>
-          正在加载...
-        </div>
+        <SimpleLoading
+          type="content"
+          size="medium"
+          message="正在初始化..."
+        />
       </Container>
     );
   }

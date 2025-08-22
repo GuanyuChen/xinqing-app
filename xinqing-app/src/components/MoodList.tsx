@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MoodRecord, MOOD_ICONS, MOOD_LABELS } from '../types/mood';
 import { theme } from '../styles/theme';
+import { ContentPlaceholders } from './SimpleLoading';
 
 interface MoodListProps {
   records: MoodRecord[];
@@ -185,41 +186,6 @@ const EmptySubtext = styled.div`
   color: ${theme.colors.text.light};
 `;
 
-const LoadingItem = styled(motion.div)`
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: ${theme.borderRadius.medium};
-  padding: ${theme.spacing.lg};
-  margin-bottom: ${theme.spacing.md};
-  
-  .loading-header {
-    display: flex;
-    align-items: center;
-    gap: ${theme.spacing.md};
-    margin-bottom: ${theme.spacing.md};
-  }
-  
-  .loading-avatar {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    background: ${theme.colors.accent.warmGray};
-  }
-  
-  .loading-meta {
-    flex: 1;
-  }
-  
-  .loading-line {
-    height: 12px;
-    background: ${theme.colors.accent.warmGray};
-    border-radius: 6px;
-    margin-bottom: ${theme.spacing.xs};
-    
-    &.short { width: 60%; }
-    &.long { width: 100%; }
-  }
-`;
-
 type SortType = 'date-desc' | 'date-asc' | 'mood';
 
 const MoodList: React.FC<MoodListProps> = ({
@@ -278,24 +244,10 @@ const MoodList: React.FC<MoodListProps> = ({
   if (isLoading) {
     return (
       <Container>
-        {[1, 2, 3].map((index) => (
-          <LoadingItem
-            key={index}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: index * 0.1 }}
-          >
-            <div className="loading-header">
-              <div className="loading-avatar" />
-              <div className="loading-meta">
-                <div className="loading-line short" />
-                <div className="loading-line short" />
-              </div>
-            </div>
-            <div className="loading-line long" />
-            <div className="loading-line long" />
-          </LoadingItem>
-        ))}
+        <ContentPlaceholders 
+          count={3} 
+          heights={['120px', '100px', '110px']}
+        />
       </Container>
     );
   }

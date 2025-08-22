@@ -6,6 +6,7 @@ import { theme } from '../styles/theme';
 import MoodCalendar from '../components/MoodCalendar';
 import MoodList from '../components/MoodList';
 import HybridMoodStorage from '../utils/hybridStorage';
+import SimpleLoading from '../components/SimpleLoading';
 
 const Container = styled.div`
   padding: ${theme.spacing.lg};
@@ -130,15 +131,6 @@ const StatLabel = styled.div`
   color: ${theme.colors.text.secondary};
 `;
 
-const LoadingContainer = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400px;
-  font-size: ${theme.typography.fontSize.lg};
-  color: ${theme.colors.text.secondary};
-`;
-
 const ErrorContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -240,15 +232,11 @@ const HistoryPage: React.FC = () => {
   if (isLoading) {
     return (
       <Container>
-        <LoadingContainer>
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-          >
-            ⏳
-          </motion.div>
-          <span style={{ marginLeft: theme.spacing.md }}>正在加载记录...</span>
-        </LoadingContainer>
+        <SimpleLoading
+          type="content"
+          size="medium"
+          message="正在加载记录..."
+        />
       </Container>
     );
   }
