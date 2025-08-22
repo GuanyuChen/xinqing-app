@@ -28,6 +28,12 @@ export const GlobalStyle = createGlobalStyle`
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     
+    /* PC端优化 */
+    @media (min-width: 769px) {
+      font-size: ${theme.typography.fontSize.base};
+      background-attachment: fixed;
+    }
+    
     /* 移动端优化 */
     @media (max-width: 768px) {
       font-size: ${theme.typography.fontSize.sm};
@@ -38,6 +44,10 @@ export const GlobalStyle = createGlobalStyle`
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+    
+    @media (min-width: 769px) {
+      background: radial-gradient(ellipse at center, rgba(230,224,242,0.1) 0%, rgba(214,232,245,0.1) 70%, transparent 100%);
+    }
   }
 
   /* 柔和的滚动条样式 */

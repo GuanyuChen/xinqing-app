@@ -8,9 +8,14 @@ import MoodList from '../components/MoodList';
 import HybridMoodStorage from '../utils/hybridStorage';
 
 const Container = styled.div`
-  min-height: 100vh;
   padding: ${theme.spacing.lg};
-  background: ${theme.colors.gradient.primary};
+  background: transparent;
+  
+  @media (min-width: 769px) {
+    padding: ${theme.spacing.lg};
+    max-width: 100%;
+    margin: 0 auto;
+  }
 `;
 
 const Header = styled(motion.div)`
