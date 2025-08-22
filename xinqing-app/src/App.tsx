@@ -7,6 +7,7 @@ import { GlobalStyle } from './styles/GlobalStyle';
 import TodayMoodRecord from './pages/TodayMoodRecord';
 import HistoryPage from './pages/HistoryPage';
 import AnalyticsPage from './pages/AnalyticsPage';
+import PeriodPage from './pages/PeriodPage';
 import CenterIcon from './components/CenterIcon';
 
 const AppContainer = styled.div`
@@ -191,6 +192,11 @@ const navItems = [
     label: '历史',
   },
   {
+    path: '/period',
+    icon: '🌸',
+    label: '月经',
+  },
+  {
     path: '/analytics',
     icon: '📊',
     label: '分析',
@@ -283,6 +289,20 @@ const AppRoutes: React.FC = () => {
                 transition={{ duration: 0.3 }}
               >
                 <HistoryPage />
+              </motion.div>
+            }
+          />
+          <Route
+            path="/period"
+            element={
+              <motion.div
+                key="period"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.3 }}
+              >
+                <PeriodPage />
               </motion.div>
             }
           />
