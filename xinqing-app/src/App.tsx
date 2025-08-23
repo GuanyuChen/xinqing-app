@@ -10,6 +10,7 @@ import TodayMoodRecord from './pages/TodayMoodRecord';
 import HistoryPage from './pages/HistoryPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import PeriodPage from './pages/PeriodPage';
+import AuthCallback from './pages/AuthCallback';
 import CenterIcon from './components/CenterIcon';
 import UserProfile from './components/UserProfile';
 import SimpleLoading from './components/SimpleLoading';
@@ -420,6 +421,7 @@ const App: React.FC = () => {
 const AppWithAuth: React.FC = () => {
   const { user, loading } = useAuth();
   const [isInitialLoading, setIsInitialLoading] = useState(true);
+  const location = useLocation();
 
   useEffect(() => {
     const initializeApp = async () => {
@@ -440,6 +442,16 @@ const AppWithAuth: React.FC = () => {
 
     initializeApp();
   }, [loading]);
+
+  // 认证回调页面，无需认证即可访问
+  if (location.pathname === '/auth/callback') {
+    return (
+      <>
+        <GlobalStyle />
+        <AuthCallback />
+      </>
+    );
+  }
 
   // 认证加载中
   if (loading || isInitialLoading) {

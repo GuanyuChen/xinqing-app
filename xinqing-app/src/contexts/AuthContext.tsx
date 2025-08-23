@@ -76,10 +76,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signInWithGoogle = async () => {
     try {
       setLoading(true);
+      
+      // 根据环境设置不同的回调URL
+      const isDev = window.location.hostname === 'localhost';
+      const redirectTo = isDev 
+        ? `${window.location.origin}/` 
+        : 'https://xinqing-app.vercel.app/auth/callback';
+      
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/`,
+          redirectTo,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',

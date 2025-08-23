@@ -35,7 +35,9 @@
 1. 添加授权重定向 URI: `https://qiqxttoczkaoanwfwbxn.supabase.co/auth/v1/callback`
 2. 添加授权 JavaScript 源: 
    - `http://localhost:3000` (开发环境)
-   - 你的生产域名 (生产环境)
+   - `https://xinqing-app.vercel.app` (生产环境)
+3. **⚠️ 生产环境特别注意**：还需添加应用回调URI
+   - `https://xinqing-app.vercel.app/auth/callback`
 
 ### 3. 创建数据库表
 
@@ -126,3 +128,38 @@ App.tsx
 1. 浏览器开发者工具的控制台日志
 2. Supabase Dashboard 的日志
 3. 网络请求是否成功
+
+## 🚀 生产环境部署配置
+
+### 重要：生产环境回调URL配置
+
+生产环境部署到 `https://xinqing-app.vercel.app` 需要特殊的回调URL配置：
+
+#### 1. Supabase Dashboard 配置
+**Authentication → URL Configuration**：
+- **Site URL**: `https://xinqing-app.vercel.app`
+- **Redirect URLs**: 添加 `https://xinqing-app.vercel.app/auth/callback`
+
+#### 2. Google Cloud Console 配置
+**已授权的重定向 URI** 中添加：
+- `https://xinqing-app.vercel.app/auth/callback`
+
+#### 3. 代码自动处理
+应用代码已自动处理环境差异：
+- **开发环境**: 重定向到 `http://localhost:3000/`
+- **生产环境**: 重定向到 `https://xinqing-app.vercel.app/auth/callback`
+
+#### 4. 认证流程
+1. 用户在生产环境点击登录
+2. 跳转到 Google OAuth 授权页面
+3. 用户授权后重定向到 `/auth/callback`
+4. 回调页面处理认证状态并跳转到主页
+
+#### 5. 验证部署
+部署完成后测试：
+1. 访问 `https://xinqing-app.vercel.app`
+2. 点击 "使用 Google 账号登录"
+3. 完成授权后应该正确跳转到应用主页
+4. 验证用户信息正确显示
+
+⚠️ **关键提醒**：生产环境必须使用 `/auth/callback` 作为回调路径，这与开发环境的 `/` 路径不同！
