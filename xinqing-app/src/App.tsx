@@ -4,11 +4,14 @@ import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react
 import { motion, AnimatePresence } from 'framer-motion';
 import { theme } from './styles/theme';
 import { GlobalStyle } from './styles/GlobalStyle';
+import { AuthProvider, useAuth } from './contexts/AuthContext';
+import LoginPage from './pages/LoginPage';
 import TodayMoodRecord from './pages/TodayMoodRecord';
 import HistoryPage from './pages/HistoryPage';
 import AnalyticsPage from './pages/AnalyticsPage';
 import PeriodPage from './pages/PeriodPage';
 import CenterIcon from './components/CenterIcon';
+import UserProfile from './components/UserProfile';
 import SimpleLoading from './components/SimpleLoading';
 
 const AppContainer = styled.div`
@@ -34,9 +37,11 @@ const Navigation = styled(motion.nav)`
     right: 0;
     display: flex;
     justify-content: center;
+    align-items: center;
     padding: ${theme.spacing.md} 0;
     background: rgba(255, 255, 255, 0.05);
     backdrop-filter: blur(10px);
+    gap: ${theme.spacing.lg};
   }
   
   /* 移动端底部固定导航 */
@@ -69,7 +74,8 @@ const NavContainer = styled.div`
     padding: ${theme.spacing.md} ${theme.spacing.xl};
     border-radius: ${theme.borderRadius.large};
     gap: ${theme.spacing.sm};
-    margin: 0 auto;
+    margin: 0;
+    margin-right: ${theme.spacing.lg}; /* 为用户头像预留空间 */
   }
   
   /* 移动端圆形导航样式 */
@@ -323,6 +329,11 @@ const ResponsiveNavigation: React.FC = () => {
           </>
         )}
       </NavContainer>
+      
+      {/* PC端用户头像，只在认证后显示 */}
+      {!isMobile && (
+        <UserProfile />
+      )}
     </Navigation>
   );
 };
@@ -396,14 +407,29 @@ const AppRoutes: React.FC = () => {
 };
 
 const App: React.FC = () => {
+  return (
+    <Router>
+      <AuthProvider>
+        <AppWithAuth />
+      </AuthProvider>
+    </Router>
+  );
+};
+
+// 需要认证的主应用组件
+const AppWithAuth: React.FC = () => {
+  const { user, loading } = useAuth();
   const [isInitialLoading, setIsInitialLoading] = useState(true);
 
   useEffect(() => {
     const initializeApp = async () => {
       try {
-        // 简化初始化过程，只需要短暂加载
-        await new Promise(resolve => setTimeout(resolve, 1500));
-        setIsInitialLoading(false);
+        // 等待认证状态确定
+        if (!loading) {
+          // 简化初始化过程，只需要短暂加载
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          setIsInitialLoading(false);
+        }
       } catch (error) {
         console.error('应用初始化失败:', error);
         // 即使失败也要继续，确保应用可用
@@ -413,9 +439,10 @@ const App: React.FC = () => {
     };
 
     initializeApp();
-  }, []);
+  }, [loading]);
 
-  if (isInitialLoading) {
+  // 认证加载中
+  if (loading || isInitialLoading) {
     return (
       <>
         <GlobalStyle />
@@ -428,14 +455,23 @@ const App: React.FC = () => {
     );
   }
 
-  return (
-    <Router>
-      <AppContainer>
+  // 未认证，显示登录页面
+  if (!user) {
+    return (
+      <>
         <GlobalStyle />
-        <AppRoutes />
-        <ResponsiveNavigation />
-      </AppContainer>
-    </Router>
+        <LoginPage />
+      </>
+    );
+  }
+
+  // 已认证，显示主应用
+  return (
+    <AppContainer>
+      <GlobalStyle />
+      <AppRoutes />
+      <ResponsiveNavigation />
+    </AppContainer>
   );
 };
 

@@ -3,14 +3,14 @@ import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MoodType, CustomMood } from '../types/mood';
 import { theme } from '../styles/theme';
-import CustomMoodStorage from '../utils/customMoodStorage';
+import { useAuth } from '../contexts/AuthContext';
+import UserCustomMoodStorage from '../utils/userCustomMoodStorage';
 import CustomMoodCreator from './CustomMoodCreator';
 
 interface MoodSelectorProps {
   selectedMood: MoodType | null;
   onMoodSelect: (mood: MoodType) => void;
   disabled?: boolean;
-  userId?: string;
 }
 
 const Container = styled.div`
@@ -282,49 +282,67 @@ const MoodSelector: React.FC<MoodSelectorProps> = ({
   selectedMood,
   onMoodSelect,
   disabled = false,
-  userId,
 }) => {
+  const { user } = useAuth();
   const [showFeedback, setShowFeedback] = useState<MoodType | null>(null);
   const [allMoods, setAllMoods] = useState<CustomMood[]>([]);
   const [showCreator, setShowCreator] = useState(false);
   const [loading, setLoading] = useState(true);
 
   const loadAllMoods = useCallback(async () => {
+    if (!user) return;
+    
     try {
       setLoading(true);
       console.log('🔄 正在加载所有心情...');
       
-      // 从 Supabase 获取所有心情（包括预置心情和用户自定义心情）
-      const moods = await CustomMoodStorage.getAll(userId);
+      // 从 Supabase 获取用户的自定义心情
+      const customMoods = await UserCustomMoodStorage.getAll(user.id);
       
-      console.log(`✅ 成功加载 ${moods.length} 个心情`);
-      setAllMoods(moods);
+      // 合并预置心情和自定义心情
+      const fallbackMoods: CustomMood[] = [
+        { id: 'happy', name: 'happy', icon: '😊', color: '#FFD93D', description: '感到快乐和满足', createdAt: new Date(), userId: user.id },
+        { id: 'sad', name: 'sad', icon: '😢', color: '#74B9FF', description: '感到悲伤或沮丧', createdAt: new Date(), userId: user.id },
+        { id: 'anxious', name: 'anxious', icon: '😰', color: '#FD79A8', description: '感到紧张或担心', createdAt: new Date(), userId: user.id },
+        { id: 'calm', name: 'calm', icon: '😌', color: '#6C5CE7', description: '感到平静和放松', createdAt: new Date(), userId: user.id },
+        { id: 'angry', name: 'angry', icon: '😡', color: '#E84393', description: '感到愤怒或烦躁', createdAt: new Date(), userId: user.id },
+        { id: 'excited', name: 'excited', icon: '🤩', color: '#00B894', description: '感到兴奋或激动', createdAt: new Date(), userId: user.id },
+        { id: 'tired', name: 'tired', icon: '😴', color: '#636E72', description: '感到疲惫或倦怠', createdAt: new Date(), userId: user.id },
+        { id: 'peaceful', name: 'peaceful', icon: '🧘‍♀️', color: '#00CEC9', description: '感到内心宁静', createdAt: new Date(), userId: user.id }
+      ];
+      
+      const allMoodsData = [...fallbackMoods, ...customMoods];
+      
+      console.log(`✅ 成功加载 ${allMoodsData.length} 个心情`);
+      setAllMoods(allMoodsData);
     } catch (error) {
       console.error('加载心情失败:', error);
       // 如果加载失败，使用本地预置心情作为后备
       const fallbackMoods: CustomMood[] = [
-        { id: 'happy', name: 'happy', icon: '😊', color: '#FFD93D', description: '感到快乐和满足', createdAt: new Date() },
-        { id: 'sad', name: 'sad', icon: '😢', color: '#74B9FF', description: '感到悲伤或沮丧', createdAt: new Date() },
-        { id: 'anxious', name: 'anxious', icon: '😰', color: '#FD79A8', description: '感到紧张或担心', createdAt: new Date() },
-        { id: 'calm', name: 'calm', icon: '😌', color: '#6C5CE7', description: '感到平静和放松', createdAt: new Date() },
-        { id: 'angry', name: 'angry', icon: '😡', color: '#E84393', description: '感到愤怒或烦躁', createdAt: new Date() },
-        { id: 'excited', name: 'excited', icon: '🤩', color: '#00B894', description: '感到兴奋或激动', createdAt: new Date() },
-        { id: 'tired', name: 'tired', icon: '😴', color: '#636E72', description: '感到疲惫或倦怠', createdAt: new Date() },
-        { id: 'peaceful', name: 'peaceful', icon: '🧘‍♀️', color: '#00CEC9', description: '感到内心宁静', createdAt: new Date() }
+        { id: 'happy', name: 'happy', icon: '😊', color: '#FFD93D', description: '感到快乐和满足', createdAt: new Date(), userId: user.id },
+        { id: 'sad', name: 'sad', icon: '😢', color: '#74B9FF', description: '感到悲伤或沮丧', createdAt: new Date(), userId: user.id },
+        { id: 'anxious', name: 'anxious', icon: '😰', color: '#FD79A8', description: '感到紧张或担心', createdAt: new Date(), userId: user.id },
+        { id: 'calm', name: 'calm', icon: '😌', color: '#6C5CE7', description: '感到平静和放松', createdAt: new Date(), userId: user.id },
+        { id: 'angry', name: 'angry', icon: '😡', color: '#E84393', description: '感到愤怒或烦躁', createdAt: new Date(), userId: user.id },
+        { id: 'excited', name: 'excited', icon: '🤩', color: '#00B894', description: '感到兴奋或激动', createdAt: new Date(), userId: user.id },
+        { id: 'tired', name: 'tired', icon: '😴', color: '#636E72', description: '感到疲惫或倦怠', createdAt: new Date(), userId: user.id },
+        { id: 'peaceful', name: 'peaceful', icon: '🧘‍♀️', color: '#00CEC9', description: '感到内心宁静', createdAt: new Date(), userId: user.id }
       ];
       setAllMoods(fallbackMoods);
     } finally {
       setLoading(false);
     }
-  }, [userId]);
+  }, [user]);
 
   useEffect(() => {
     loadAllMoods();
   }, [loadAllMoods]);
 
   const handleCustomMoodSave = async (moodData: { name: string; icon: string; color: string; description: string }) => {
+    if (!user) return;
+    
     try {
-      const savedMood = await CustomMoodStorage.save(moodData, userId);
+      const savedMood = await UserCustomMoodStorage.save(moodData, user.id);
       
       if (savedMood) {
         // 重新加载所有心情以获取最新数据

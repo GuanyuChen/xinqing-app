@@ -11,6 +11,7 @@ export const theme = {
       deepLavender: '#C8B7E0', // 深雾紫
       softBlue: '#B8D4ED',     // 柔蓝
       warmGray: '#E8E5E2',     // 暖灰
+      softPink: '#F2E6E9',     // 柔粉色
     },
     text: {
       primary: '#4A4456',    // 深紫灰
@@ -77,6 +78,7 @@ export const theme = {
       tight: 1.2,
       normal: 1.5,
       loose: 1.8,
+      relaxed: 1.6,
     }
   },
   animation: {

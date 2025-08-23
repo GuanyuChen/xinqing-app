@@ -3,11 +3,12 @@ import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { MoodType, MoodRecord } from '../types/mood';
 import { theme } from '../styles/theme';
+import { useAuth } from '../contexts/AuthContext';
 import MoodSelector from '../components/MoodSelector';
 import IntensitySelector from '../components/IntensitySelector';
 import DiaryInput from '../components/DiaryInput';
 import MediaUpload from '../components/MediaUpload';
-import HybridMoodStorage from '../utils/hybridStorage';
+import UserMoodStorage from '../utils/userMoodStorage';
 import SimpleLoading from '../components/SimpleLoading';
 
 const Container = styled.div`
@@ -191,6 +192,7 @@ const SaveStatus = styled(motion.div)<{ $status: 'saving' | 'saved' | 'error' }>
 const steps = ['情绪', '强度', '记录', '媒体'];
 
 const TodayMoodRecord: React.FC = () => {
+  const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedMood, setSelectedMood] = useState<MoodType | null>(null);
   const [intensity, setIntensity] = useState(3);
@@ -199,7 +201,6 @@ const TodayMoodRecord: React.FC = () => {
   const [audio, setAudio] = useState<string | undefined>();
   const [saveStatus, setSaveStatus] = useState<'saving' | 'saved' | 'error' | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [storage] = useState(() => new HybridMoodStorage());
 
   const today = new Date().toISOString().split('T')[0];
   const todayFormatted = new Date().toLocaleDateString('zh-CN', {
@@ -210,12 +211,16 @@ const TodayMoodRecord: React.FC = () => {
   });
 
   useEffect(() => {
-    loadTodayRecord();
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    if (user) {
+      loadTodayRecord();
+    }
+  }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const loadTodayRecord = async () => {
+    if (!user) return;
+    
     try {
-      const existingRecord = await storage.getByDate(today);
+      const existingRecord = await UserMoodStorage.getByDate(today, user.id);
       if (existingRecord) {
         setSelectedMood(existingRecord.mood);
         setIntensity(existingRecord.intensity);
@@ -231,7 +236,7 @@ const TodayMoodRecord: React.FC = () => {
   };
 
   const saveRecord = async () => {
-    if (!selectedMood) return;
+    if (!selectedMood || !user) return;
 
     try {
       setSaveStatus('saving');
@@ -246,7 +251,7 @@ const TodayMoodRecord: React.FC = () => {
         tags: [], // 可以后续添加标签功能
       };
 
-      await storage.save(recordData);
+      await UserMoodStorage.upsert(recordData, user.id);
       setSaveStatus('saved');
       
       setTimeout(() => {
