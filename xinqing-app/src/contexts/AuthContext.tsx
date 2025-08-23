@@ -76,10 +76,17 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const signInWithGoogle = async () => {
     try {
       setLoading(true);
+      
+      // 明确设置生产环境的重定向URL
+      const currentOrigin = window.location.origin;
+      const redirectTo = `${currentOrigin}/`;
+      
+      console.log('🔄 认证重定向URL:', redirectTo);
+      
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/`,
+          redirectTo,
           queryParams: {
             access_type: 'offline',
             prompt: 'consent',

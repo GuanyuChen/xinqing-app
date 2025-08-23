@@ -35,7 +35,9 @@
 1. 添加授权重定向 URI: `https://qiqxttoczkaoanwfwbxn.supabase.co/auth/v1/callback`
 2. 添加授权 JavaScript 源: 
    - `http://localhost:3000` (开发环境)
-   - 你的生产域名 (生产环境)
+   - `https://xinqing-app.vercel.app` (生产环境 - **必须配置！**)
+
+⚠️ **重要提醒**：如果生产环境登录后跳转到 `http://localhost:3000/#access_token`，说明 Google OAuth 配置中缺少生产域名。请确保在 Google Cloud Console 的 OAuth 2.0 客户端设置中添加 `https://xinqing-app.vercel.app` 作为授权 JavaScript 源。
 
 ### 3. 创建数据库表
 
@@ -126,3 +128,28 @@ App.tsx
 1. 浏览器开发者工具的控制台日志
 2. Supabase Dashboard 的日志
 3. 网络请求是否成功
+
+## 🚨 生产环境常见问题
+
+### 问题：登录后跳转到 `http://localhost:3000/#access_token`
+**症状**：在生产环境 `https://xinqing-app.vercel.app` 登录 Google 后，页面跳转到 `http://localhost:3000/#access_token` 而不是生产环境域名。
+
+**根本原因**：Google Cloud Console 的 OAuth 2.0 客户端配置中缺少生产环境域名。
+
+**解决方案**：
+1. 登录 [Google Cloud Console](https://console.cloud.google.com/)
+2. 进入 "APIs & Services" → "Credentials"
+3. 找到你的 OAuth 2.0 客户端 ID 并点击编辑
+4. 在 "Authorized JavaScript origins" 中添加：
+   - `https://xinqing-app.vercel.app`
+5. 点击 "Save" 保存配置
+6. 等待几分钟配置生效，然后重新测试登录
+
+**验证修复**：
+- 在生产环境登录后，URL 应该变为：`https://xinqing-app.vercel.app/#access_token=...`
+- 控制台应该显示正确的重定向URL：`🔄 认证重定向URL: https://xinqing-app.vercel.app/`
+
+### 其他检查项目
+- 确认 Supabase Dashboard 的 Site URL 设置为 `https://xinqing-app.vercel.app`
+- 确认 Redirect URLs 包含 `https://xinqing-app.vercel.app/`
+- 检查浏览器控制台是否有错误信息
