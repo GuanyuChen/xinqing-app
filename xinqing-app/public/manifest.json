@@ -1,25 +1,72 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "心晴",
+  "name": "心晴 - 专业情绪记录与心理健康管理应用",
+  "description": "专业的情绪记录与心理健康管理应用，支持Google登录，提供心情日记、情绪分析、月经周期追踪等功能。",
+  "lang": "zh-CN",
+  "categories": ["health", "lifestyle", "productivity"],
   "icons": [
     {
       "src": "favicon.ico",
       "sizes": "64x64 32x32 24x24 16x16",
-      "type": "image/x-icon"
+      "type": "image/x-icon",
+      "purpose": "any"
     },
     {
       "src": "logo192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any maskable"
     },
     {
       "src": "logo512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any maskable"
     }
   ],
-  "start_url": ".",
+  "start_url": "/",
+  "scope": "/",
   "display": "standalone",
-  "theme_color": "#000000",
-  "background_color": "#ffffff"
+  "orientation": "portrait-primary",
+  "theme_color": "#E6E0F2",
+  "background_color": "#FEFEFE",
+  "prefer_related_applications": false,
+  "shortcuts": [
+    {
+      "name": "今日心情记录",
+      "short_name": "记录心情",
+      "description": "快速记录今天的心情和感受",
+      "url": "/",
+      "icons": [
+        {
+          "src": "logo192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "心情历史",
+      "short_name": "历史记录",
+      "description": "查看过往的心情记录",
+      "url": "/history",
+      "icons": [
+        {
+          "src": "logo192.png",
+          "sizes": "192x192"
+        }
+      ]
+    },
+    {
+      "name": "情绪分析",
+      "short_name": "数据分析",
+      "description": "查看个人情绪数据分析",
+      "url": "/analytics",
+      "icons": [
+        {
+          "src": "logo192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ]
 }
